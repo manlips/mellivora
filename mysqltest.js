@@ -23,11 +23,6 @@ connection.query('SELECT sessions.ip, auth.username, auth.password, auth.timesta
   console.log(rows);
 });
 
-function printRows(rows) {
-
-
-}
-
 connection.end(function(err) {
   // The connection is terminated gracefully
   // Ensures all previously enqueued queries are still
