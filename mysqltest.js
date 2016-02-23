@@ -9,17 +9,20 @@ var connection = mysql.createConnection({
 });
 
 function getDatabase(query, request, response) {
-  // connection.connect(function(error){
-  //   if(error){
-  //     response.end('Error connecting to Db: ' + error.stack);
-  //     //Error: Cannot enqueue Handshake after invoking quit.
-  //     return;
-  //   }
-  //   console.log('Connection established with ID: ' + connection.threadId);
-  // });
+  connection.connect(function(error){
+    if(error){
+      response.end('Error connecting to Db: ' + error.stack);
+      //Error: Cannot enqueue Handshake after invoking quit.
+      return;
+    }
+    console.log('Connection established with ID: ' + connection.threadId);
+  });
 
   connection.query(query,function(error, result){
-    if(error) throw error;
+    if(error){
+      response.end('Query Error: ' + error.stack);
+      return
+    }
 
     console.log('Running Query:\n \n' + query + '\n \n');
     console.log(result);
@@ -38,11 +41,11 @@ function getDatabase(query, request, response) {
     return text;
   }
 
-  // connection.end(function(error) {
-  //   // The connection is terminated gracefully
-  //   // Ensures all previously enqueued queries are still
-  //   // before sending a COM_QUIT packet to the MySQL server.
-  // });
+  connection.end(function(error) {
+    // The connection is terminated gracefully
+    // Ensures all previously enqueued queries are still
+    // before sending a COM_QUIT packet to the MySQL server.
+  });
 }
 
 module.exports.query = getDatabase;
