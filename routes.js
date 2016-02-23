@@ -1,4 +1,4 @@
-
+var database = require("./mysqltest.js");
 
 
 //Handle HTTP route GET / and POST / i.e. Home
@@ -19,10 +19,15 @@ function data(request, response) {
 
   if(request.url === "/data") {
     //show search
+    var queryResults;
     response.writeHead(200, { 'Content-Type': 'text/plain' });
-    response.write("Header\n");
-    response.write("This is the data page!\n");
-    response.end('Footer\n');
+    response.write("This is the data page!\n\n");
+    database.query('SELECT sessions.ip, auth.username, auth.password, auth.timestamp, auth.success '
+                  + 'FROM auth '
+                  + 'INNER JOIN sessions '
+                  + 'ON auth.session = sessions.id '
+                  + 'LIMIT 10', request, response);
+
   }
 }
 

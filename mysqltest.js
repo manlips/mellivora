@@ -8,23 +8,40 @@ var connection = mysql.createConnection({
   database: "bighive"
 });
 
-connection.connect(function(err){
-  if(err){
-    console.log('Error connecting to Db');
-    return;
+function getDatabase(query, request, response) {
+  connection.connect(function(error){
+    if(error){
+      console.log('Error connecting to Db: ' + error.stack);
+      return;
+    }
+    console.log('Connection established with ID: ' + connection.threadId);
+  });
+
+  connection.query(query,function(error, result){
+    if(error) throw error;
+
+    console.log('Running Query:\n \n' + query + '\n \n');
+    console.log(result);
+    response.end(queryToText(result, query));
+  });
+
+  function queryToText(result) {
+    var text = "Running Query: \n \n" + query + "\n \n";
+    for (i = 0; i < result.length; i++) {
+      for (property in result[i]) {
+        text += property + ": " + result[i][property] + " | ";
+      }
+      text += "\n";
+    }
+
+    return text;
   }
-  console.log('Connection established');
-});
 
-connection.query('SELECT sessions.ip, auth.username, auth.password, auth.timestamp, auth.success FROM auth INNER JOIN sessions ON auth.session = sessions.id LIMIT 5',function(err,rows){
-  if(err) throw err;
+  connection.end(function(error) {
+    // The connection is terminated gracefully
+    // Ensures all previously enqueued queries are still
+    // before sending a COM_QUIT packet to the MySQL server.
+  });
+}
 
-  console.log('Data received from Db:\n');
-  console.log(rows);
-});
-
-connection.end(function(err) {
-  // The connection is terminated gracefully
-  // Ensures all previously enqueued queries are still
-  // before sending a COM_QUIT packet to the MySQL server.
-});
+module.exports.query = getDatabase;
