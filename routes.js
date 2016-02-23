@@ -8,7 +8,7 @@ function home(request, response) {
     //show search
     response.writeHead(200, { 'Content-Type': 'text/plain' });
     response.write("Header\n");
-    response.write("Info\n");
+    response.write("Updated for sql testing :)\n");
     response.end('Footer\n');
   }
   //if url === "/" && POST

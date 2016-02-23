@@ -11,7 +11,7 @@ var connection = mysql.createConnection({
 function getDatabase(query, request, response) {
   connection.connect(function(error){
     if(error){
-      console.log('Error connecting to Db: ' + error.stack);
+      response.end('Error connecting to Db: ' + error.stack);
       return;
     }
     console.log('Connection established with ID: ' + connection.threadId);
