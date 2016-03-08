@@ -1,4 +1,5 @@
 var mysql = require("mysql");
+var renderer = require("./renderer.js");
 
 // First you need to create a connection to the db
 var connection = mysql.createConnection({
@@ -8,44 +9,62 @@ var connection = mysql.createConnection({
   database: "bighive"
 });
 
-function getDatabase(query, request, response) {
-  // connection.connect(function(error){
-  //   if(error){
-  //     response.end('Error connecting to Db: ' + error.stack);
-  //     //Error: Cannot enqueue Handshake after invoking quit.
-  //     return;
-  //   }
-  //   console.log('Connection established with ID: ' + connection.threadId);
-  // });
+connection.connect(function(error){
+  if(error){
+    response.end('Error connecting to Db: ' + error.stack);
+    //Error: Cannot enqueue Handshake after invoking quit.
+    return;
+  }
+  console.log('Connection established with ID: ' + connection.threadId);
+});
 
-  connection.query(query,function(error, result){
+function queryAuth() {
+  connection.query( 'SELECT sessions.ip, auth.username, auth.password, auth.timestamp, auth.success '
+                                + 'FROM auth '
+                                + 'INNER JOIN sessions '
+                                + 'ON auth.session = sessions.id '
+                                + 'LIMIT 5',
+                                function(error, result) {
     if(error){
-      response.end('Query Error: ' + error.stack);
-      return
+      console.error('Error on queryAuth: ' + error);
+      return;
+    }
+    console.error(result);
+    return result;
+  })
+};
+
+function queryToTable(query) {
+  var table = "";
+  connection.query(query,function(error, rows, fields){
+    if(error){
+      console.error(error);
+      return;
     }
 
     console.log('Running Query:\n \n' + query + '\n \n');
-    console.log(result);
-    response.end(queryToText(result, query));
+    console.log(rows);
+    return createQueryTable(rows);
   });
 
-  function queryToText(result) {
-    var text = "Running Query: \n \n" + query + "\n \n";
-    for (i = 0; i < result.length; i++) {
-      for (property in result[i]) {
-        text += property + ": " + result[i][property] + " | ";
-      }
-      text += "\n";
-    }
-
-    return text;
-  }
-  //
-  // connection.end(function(error) {
-  //   // The connection is terminated gracefully
-  //   // Ensures all previously enqueued queries are still
-  //   // before sending a COM_QUIT packet to the MySQL server.
-  // });
 }
 
-module.exports.query = getDatabase;
+function createQueryTable(rows) {
+  var tableHTML = "";
+  tableHTML += '<table border="1">';
+  for (i = 0; i < rows.length; i++) {
+    tableHTML += '<tr>';
+    tableHTML += '<td>' + rows[i].ip + '</td>';
+    tableHTML += '<td>' + rows[i].username + '</td>';
+    tableHTML += '<td>' + rows[i].password + '</td>';
+    tableHTML += '<td>' + rows[i].timestamp + '</td>';
+    tableHTML += '<td>' + rows[i].success + '</td>';
+    tableHTML += '</tr>';
+  }
+  tableHTML += '</table>'
+  return tableHTML;
+}
+
+
+module.exports.queryToTable = queryToTable;
+module.exports.queryAuth = queryAuth;
