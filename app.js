@@ -38,7 +38,7 @@ app.use(function(err, req, res, next) {
 })
 
 app.get('/about', function (req, res) {
-   console.log("Got a GET request for the homepage");
+   console.log("Got a GET request for about");
    res.render('about');
 });
 

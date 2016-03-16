@@ -1,12 +1,13 @@
 var mysql = require("mysql");
 var renderer = require("./renderer.js");
+var fs = require("fs");
 
 // First you need to create a connection to the db
 var connection = mysql.createConnection({
-  host: "52.77.31.251",
-  user: "bees",
-  password: "AnTrackt0R",
-  database: "bighive"
+  host: "52.31.79.0",
+  user: "KingOfBees",
+  password: "LotusFlower5:01",
+  database: "cowriedb"
 });
 
 connection.connect(function(error){
@@ -18,8 +19,7 @@ connection.connect(function(error){
   console.log('Connection established with ID: ' + connection.threadId);
 });
 
-function queryAuth() {
-  connection.query( 'SELECT sessions.ip, auth.username, auth.password, auth.timestamp, auth.success '
+connection.query( 'SELECT sessions.ip, auth.username, auth.password, auth.timestamp, auth.success '
                                 + 'FROM auth '
                                 + 'INNER JOIN sessions '
                                 + 'ON auth.session = sessions.id '
@@ -29,42 +29,60 @@ function queryAuth() {
       console.error('Error on queryAuth: ' + error);
       return;
     }
-    console.error(result);
-    return result;
-  })
-};
+    console.log(result);
 
-function queryToTable(query) {
-  var table = "";
-  connection.query(query,function(error, rows, fields){
-    if(error){
-      console.error(error);
-      return;
+    var tableHTML = "";
+    tableHTML += '<table border="1">';
+    for (i = 0; i < result.length; i++) {
+      tableHTML += '<tr>';
+      tableHTML += '<td>' + result[i].ip + '</td>';
+      tableHTML += '<td>' + result[i].username + '</td>';
+      tableHTML += '<td>' + result[i].password + '</td>';
+      tableHTML += '<td>' + result[i].timestamp + '</td>';
+      tableHTML += '<td>' + result[i].success + '</td>';
+      tableHTML += '</tr>';
     }
-
-    console.log('Running Query:\n \n' + query + '\n \n');
-    console.log(rows);
-    return createQueryTable(rows);
+    tableHTML += '</table>'
+    console.log(tableHTML);
+    fs.writeFile(__dirname + "/views/partials/authtable.handlebars", tableHTML, function(err) {
+      if(err) {
+        return console.log(err);
+      }
+      console.log("authtable.handlebars has been created")
+    })
   });
 
-}
-
-function createQueryTable(rows) {
-  var tableHTML = "";
-  tableHTML += '<table border="1">';
-  for (i = 0; i < rows.length; i++) {
-    tableHTML += '<tr>';
-    tableHTML += '<td>' + rows[i].ip + '</td>';
-    tableHTML += '<td>' + rows[i].username + '</td>';
-    tableHTML += '<td>' + rows[i].password + '</td>';
-    tableHTML += '<td>' + rows[i].timestamp + '</td>';
-    tableHTML += '<td>' + rows[i].success + '</td>';
-    tableHTML += '</tr>';
-  }
-  tableHTML += '</table>'
-  return tableHTML;
-}
-
-
-module.exports.queryToTable = queryToTable;
-module.exports.queryAuth = queryAuth;
+// function queryToTable(query) {
+//   var table = "";
+//   connection.query(query,function(error, rows, fields){
+//     if(error){
+//       console.error(error);
+//       return;
+//     }
+//
+//     console.log('Running Query:\n \n' + query + '\n \n');
+//     console.log(rows);
+//     createQueryTable(rows, );
+//   });
+//
+// }
+//
+// function createQueryTable(rows, callback) {
+//   var tableHTML = "";
+//   tableHTML += '<table border="1">';
+//   for (i = 0; i < rows.length; i++) {
+//     tableHTML += '<tr>';
+//     tableHTML += '<td>' + rows[i].ip + '</td>';
+//     tableHTML += '<td>' + rows[i].username + '</td>';
+//     tableHTML += '<td>' + rows[i].password + '</td>';
+//     tableHTML += '<td>' + rows[i].timestamp + '</td>';
+//     tableHTML += '<td>' + rows[i].success + '</td>';
+//     tableHTML += '</tr>';
+//   }
+//   tableHTML += '</table>'
+//   return tableHTML;
+// }
+//
+//
+// module.exports.queryToTable = queryToTable;
+// module.exports.queryAuth = queryAuth;
