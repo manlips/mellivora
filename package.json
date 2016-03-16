@@ -1,0 +1,29 @@
+{
+  "name": "mellivora",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A Web Admin App for Cowrie Honeypots",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "fs": "0.0.2",
+    "mysql": "^2.10.2",
+    "node-mysql": "^0.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HoneyDev/Mellivora.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HoneyDev/Mellivora/issues"
+  },
+  "homepage": "https://github.com/HoneyDev/Mellivora#readme"
+}

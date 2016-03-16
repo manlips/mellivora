@@ -1,0 +1,56 @@
+<div id="page-wrapper">
+
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    Some Stats
+
+                </h1>
+                <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                <script type="text/javascript">
+                  google.charts.load('current', {'packages':['corechart']});
+                  google.charts.setOnLoadCallback(drawChart);
+
+                  function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                      ['Date', 'Authentications'],
+                      ['2004',  1000],
+                      ['2005',  1170],
+                      ['2006',  660],
+                      ['2007',  1030]
+                    ]);
+
+                    var options = {
+                      title: 'Auth Chart [Dummy Data]',
+
+                      legend: { position: 'bottom' }
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+                    chart.draw(data, options);
+                  }
+                </script>
+                <div id="curve_chart" style="width: 100%; height: 500px; box-shadow: 1px 1px 10px grey;"></div>
+                <br>
+                <br>
+                <br>
+                <span>TextText Here is some text</span>
+                <br>
+                <br>
+                <br>
+                <br>
+
+                {{table1}}
+            </div>
+        </div>
+        <!-- /.row -->
+
+    </div>
+    <!-- /.container-fluid -->
+
+</div>
+<!-- /#page-wrapper -->
