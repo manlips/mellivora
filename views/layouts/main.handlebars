@@ -11,7 +11,6 @@
     {{>bsnavbar}}
 
     <div id="page-wrapper">
-      {{>authtable}}
       {{{body}}}
     </div>
     <!-- /#page-wrapper -->
@@ -20,7 +19,7 @@
   <!-- /#wrapper -->
 
   <!-- jQuery -->
-  <script src="/sb-admin/bower_components/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="jQuery-2.2.0/jquery-2.2.0.js"></script>
 
   <!-- Bootstrap Core JavaScript -->
   <script src="/sb-admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -29,16 +28,32 @@
   <script src="/sb-admin/bower_components/metisMenu/dist/metisMenu.min.js"></script>
 
   <!-- DataTables JavaScript -->
-  <!-- <script src="/sb-admin/bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-  <script src="/sb-admin/bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script> -->
+  <script type="text/javascript" src="/datatables/DataTables-1.10.11/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="/datatables/DataTables-1.10.11/js/dataTables.bootstrap.js"></script>
+  <script type="text/javascript" src="/datatables/Responsive-2.0.2/js/dataTables.responsive.js"></script>
 
   <!-- Morris Charts JavaScript -->
-  <script src="/sb-admin/bower_components/raphael/raphael-min.js"></script>
+  <!-- <script src="/sb-admin/bower_components/raphael/raphael-min.js"></script>
   <script src="/sb-admin/bower_components/morrisjs/morris.min.js"></script>
-  <script src="/sb-admin/js/morris-data.js"></script>
+  <script src="/sb-admin/js/morris-data.js"></script> -->
 
   <!-- Custom Theme JavaScript -->
   <script src="/sb-admin/dist/js/sb-admin-2.js"></script>
+
+  <script>
+    $(document).ready( function () {
+      $('#auth_datatable').DataTable( {
+        "ajax": "json/authtable.json",
+        "columns": [
+          {"data": "ip"},
+          {"data": "username"},
+          {"data": "password"},
+          {"data": "timestamp"},
+          {"data": "success"},
+        ]
+      });
+    } );
+  </script>
 
 </body>
 

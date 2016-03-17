@@ -37,9 +37,9 @@ app.use(function(err, req, res, next) {
   next();
 });
 
-app.get('/about', function (req, res) {
-   console.log("Got a GET request for about");
-   res.render('about');
+app.get('/tables', function (req, res) {
+   console.log("Got a GET request for tables");
+   res.render('tables');
 });
 
 app.use(function(req, res) {
