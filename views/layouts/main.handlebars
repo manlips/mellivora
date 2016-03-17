@@ -43,6 +43,7 @@
   <script>
     $(document).ready( function () {
       $('#auth_datatable').DataTable( {
+        responsive: true,
         "ajax": "json/authtable.json",
         "columns": [
           {"data": "ip"},
