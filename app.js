@@ -25,17 +25,17 @@ app.get('/', function (req, res) {
 app.use(function(req, res, next) {
   console.log("Looking for URL: " + req.url);
   next();
-})
+});
 
 app.get('/junk', function(req, res, next) {
   console.log("tried to access junk");
   throw new Error('junk doesn\'t exist');
-})
+});
 
 app.use(function(err, req, res, next) {
   console.log("Error: " + err.message);
   next();
-})
+});
 
 app.get('/about', function (req, res) {
    console.log("Got a GET request for about");
