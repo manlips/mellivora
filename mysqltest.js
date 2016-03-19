@@ -1,5 +1,4 @@
 var mysql = require("mysql");
-var renderer = require("./renderer.js");
 var fs = require("fs");
 
 // First you need to create a connection to the db
@@ -19,22 +18,22 @@ connection.connect(function(error){
   console.log('Connection established with ID: ' + connection.threadId);
 });
 
-connection.query( 'SELECT sessions.ip, auth.username, auth.password, auth.timestamp, auth.success '
+connection.query( 'SELECT sessions.ip, auth.username, auth.password, auth.timestamp '
                                 + 'FROM auth '
                                 + 'INNER JOIN sessions '
                                 + 'ON auth.session = sessions.id '
-                                + 'LIMIT 5',
+                                + 'ORDER BY auth.timestamp ASC;',
                                 function(error, result) {
     if(error){
       console.error('Error on queryAuth: ' + error);
       return;
     }
     console.log(result);
-    fs.writeFile(__dirname + "/public/json/authtable.JSON", JSON.stringify(result), function(err) {
+    fs.writeFile(__dirname + "/public/json/authtable.json", JSON.stringify(result), function(err) {
       if(err) {
         return console.log(err);
       }
-      console.log("authtable.JSON has been created! :)")
+      console.log("authtable.json has been created! :)")
     })
   });
 

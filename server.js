@@ -27,9 +27,8 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/junk', function(req, res, next) {
-  console.log("tried to access junk");
-  throw new Error('junk doesn\'t exist');
+app.get('/dailyauth', function(req, res, next) {
+  console.log("Got a GET request for /dailyauth");
 });
 
 app.use(function(err, req, res, next) {
@@ -38,7 +37,7 @@ app.use(function(err, req, res, next) {
 });
 
 app.get('/tables', function (req, res) {
-   console.log("Got a GET request for tables");
+   console.log("Got a GET request for /tables");
    res.render('tables');
 });
 

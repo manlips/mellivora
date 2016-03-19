@@ -1,0 +1,69 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Graph
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+      <script type="text/javascript">
+
+          google.charts.load('current', {packages: ['corechart', 'line']});
+
+          google.charts.setOnLoadCallback(drawChart);
+
+          //Convoluted process to count dates...
+          function drawChart() {
+
+            var data = new google.visualization.DataTable();
+
+            $.getJSON('json/authtable.json', function(obj) {
+
+              var dateCount = [{"date": obj[0].timestamp.substring(0, 10), "count": 1}];
+              obj.forEach( function(arrayItem) {
+                var shortDate = arrayItem.timestamp.substring(0, 10); //original date format is 2016-03-15T15:02:30.000Z
+                if (shortDate !== dateCount[dateCount.length - 1].date) {
+                  dateCount.push({"date": shortDate, "count": 1});
+                } else {
+                  dateCount[dateCount.length - 1].count += 1;
+                }
+
+              });
+
+              data.addColumn('date', 'Date');
+              data.addColumn('number', 'Authentication Requests');
+
+              dateCount.forEach( function(arrayItem) {
+                document.getElementById('chart_div').innerHTML = arrayItem.date;
+                data.addRow([new Date(arrayItem.date), arrayItem.count]);
+              });
+              var options = {
+                height: 400,
+                hAxis: {
+                  format: 'dd/MM/yyyy'
+                }
+              }
+              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+              chart.draw(data, options);
+
+              google.visualization.events.addListener(chart, 'select', function() {
+                var selection = chart.getSelection();
+                var row = selection[0].row;
+                var col = selection[0].column;
+                var dateSelect = data.getValue(row, 0);
+                location.href = 'http://localhost:3000/dailyauth?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect);
+              })
+
+            })
+
+
+        }
+      </script>
+
+      <!--Div that will hold the chart-->
+      <div id="chart_div"></div>
+
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
