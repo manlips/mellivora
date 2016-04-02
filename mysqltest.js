@@ -29,7 +29,7 @@ connection.query( 'SELECT sessions.ip, auth.username, auth.password, auth.timest
       return;
     }
     console.log(result);
-    fs.writeFile(__dirname + "/public/json/authtable.json", JSON.stringify(result), function(err) {
+    fs.writeFile(__dirname + "/bigjson/authtable.json", JSON.stringify(result), function(err) {
       if(err) {
         return console.log(err);
       }

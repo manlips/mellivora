@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        Graph
+        Number of authentications by day
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">
@@ -17,23 +17,12 @@
 
             var data = new google.visualization.DataTable();
 
-            $.getJSON('json/authtable.json', function(obj) {
-
-              var dateCount = [{"date": obj[0].timestamp.substring(0, 10), "count": 1}];
-              obj.forEach( function(arrayItem) {
-                var shortDate = arrayItem.timestamp.substring(0, 10); //original date format is 2016-03-15T15:02:30.000Z
-                if (shortDate !== dateCount[dateCount.length - 1].date) {
-                  dateCount.push({"date": shortDate, "count": 1});
-                } else {
-                  dateCount[dateCount.length - 1].count += 1;
-                }
-
-              });
+            $.getJSON('json/totalauth.json', function(obj) {
 
               data.addColumn('date', 'Date');
               data.addColumn('number', 'Authentication Requests');
 
-              dateCount.forEach( function(arrayItem) {
+              obj.forEach( function(arrayItem) {
                 document.getElementById('chart_div').innerHTML = arrayItem.date;
                 data.addRow([new Date(arrayItem.date), arrayItem.count]);
               });
@@ -52,7 +41,7 @@
                 var row = selection[0].row;
                 var col = selection[0].column;
                 var dateSelect = data.getValue(row, 0);
-                location.href = 'http://localhost:3000/dailyauth?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect);
+                location.href = 'http://localhost:3000/dailystats?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect)/1000;
               })
 
             })
@@ -64,6 +53,10 @@
       <!--Div that will hold the chart-->
       <div id="chart_div"></div>
 
+      <p>
+         Try clicking on the graph for daily authentication stats!
+      </p>
+    </div>
     <!-- /.panel-body -->
 </div>
 <!-- /.panel -->

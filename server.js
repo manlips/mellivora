@@ -19,7 +19,7 @@ app.use(express.static(__dirname + '/public'));
 // This responds with "Hello World" on the homepage
 app.get('/', function (req, res) {
    console.log("Got a GET request for the homepage");
-   res.render('home');
+   res.render('overview');
 });
 
 app.use(function(req, res, next) {
@@ -27,8 +27,9 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/dailyauth', function(req, res, next) {
+app.get('/dailystats', function(req, res, next) {
   console.log("Got a GET request for /dailyauth");
+  res.render('dailystats');
 });
 
 app.use(function(err, req, res, next) {
@@ -36,9 +37,14 @@ app.use(function(err, req, res, next) {
   next();
 });
 
-app.get('/tables', function (req, res) {
+app.get('/table', function (req, res) {
    console.log("Got a GET request for /tables");
-   res.render('tables');
+   res.render('table');
+});
+
+app.get('/overview', function (req, res) {
+   console.log("Got a GET request for /overview");
+   res.render('overview');
 });
 
 app.use(function(req, res) {
