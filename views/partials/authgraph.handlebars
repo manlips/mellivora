@@ -41,7 +41,7 @@
                 var row = selection[0].row;
                 var col = selection[0].column;
                 var dateSelect = data.getValue(row, 0);
-                location.href = 'http://localhost:3000/dailystats?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect)/1000;
+                location.href = '/dailystats?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect)/1000;
               })
 
             })
