@@ -1,0 +1,47 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Attack Map
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+
+      <div id="map_div" ></div>
+
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+      <script type="text/javascript">
+        google.charts.load("current", {packages:["map"]});
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+
+          var data = new google.visualization.DataTable();
+
+          $.getJSON('json/locations.json', function(obj) {
+
+            data.addColumn('number', 'Lat');
+            data.addColumn('number', 'Long');
+            data.addColumn('string', 'Info');
+
+            obj.forEach( function(arrayItem) {
+              //document.getElementById('chart_div').innerHTML = arrayItem.date;
+              data.addRow([arrayItem.latitude, arrayItem.longitude, "<strong>IP:</strong> " + arrayItem.ip + '<br /> <strong>Attempts:</strong> ' + arrayItem.count + '<br /><a href="/ipstats&ip=' + arrayItem.ip +'"> Find out More! &gt;</a>']);
+            });
+          });
+
+          var options = {
+            zoomLevel: 1,
+            showTip: true,
+            mapType: 'normal'
+          }
+
+          var map = new google.visualization.Map(document.getElementById('map_div'));
+          map.draw(data, options);
+
+        }
+
+
+      </script>
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
