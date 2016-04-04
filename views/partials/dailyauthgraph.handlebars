@@ -22,26 +22,30 @@
 
             var data = new google.visualization.DataTable();
             // datetime format 2016-03-15T15:02:30.000Z
-            $.getJSON('json/authtable.json', function(obj) {
+
+            $.getJSON('json/totalauthbyhour.json', function(obj) {
               var date = new Date(GetURLParameter('date')* 1000);
               var isoDate = date.toISOString().substring(0, 10);
-              var timeArray = [];
               $(".page-header").text("Stats for " + isoDate);
               //I'm fucked
-              obj.forEach(function(arrayItem) {
-                if(timeArray.length === 0) {
-                  timeArray.push({"time": "melons", "count": 0});
-                }else {
-                  var shortDate = arrayItem.timestamp.substring(0, 10);
-                  var roundDateTime = arrayItem.timestamp.substring(0, 14) + "00:00.000Z";
-                  if ((isoDate === shortDate) && (roundDateTime !== timeArray[timeArray.length - 1].time) ) {
-                    timeArray.push({"time": roundDateTime, "count": 1})
-                  } else if (isoDate === shortDate){
-                    timeArray[timeArray.length - 1].count += 1;
-                  }
-                }
+              var timeArray = [];
+              for (i = 0.001; i < 0.24; i+= 0.01) { //I'm crazy but this initialises an array with empty times using magic
+                timeArray.push({"date": isoDate + " " + i.toString().substring(2, 4) + ":00:00", "count": 0 })
+              }
 
+              obj.forEach(function(arrayItem) {
+                if (arrayItem.date.substring(0, 10) === isoDate) {
+                  timeArray.forEach(function(timeItem) {
+                    if(arrayItem.date === timeItem.date) {
+                      timeItem.count = arrayItem.count;
+                    }
+                  })
+                } else if(timeArray.length > 1) {
+                  return;
+                }
               })
+              //$(".page-header").text(JSON.stringify(timeArray));
+
 
               timeArray.shift();
 
@@ -49,8 +53,8 @@
               data.addColumn('number', 'Authentication Requests');
 
               timeArray.forEach( function(arrayItem) {
-                document.getElementById('chart_div').innerHTML = arrayItem.time;
-                data.addRow([new Date(arrayItem.time), arrayItem.count]);
+                document.getElementById('chart_div').innerHTML = arrayItem.date;
+                data.addRow([new Date(arrayItem.date), arrayItem.count]);
               });
               var options = {
                 title: 'Authentication requests for ' + isoDate,
