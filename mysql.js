@@ -122,7 +122,7 @@ function updateIPTable() {
 
 updateIPTable();
 //updateAuthJson(); //This one is a hassle but keeping here for the sake of a few functions
-updateJson("totalauthbyday", 'SELECT DATE(timestamp) as date, COUNT(timestamp) as count '
+updateJson("totalauthbyday", "SELECT DATE_FORMAT(timestamp, '%Y-%m-%d') as date, COUNT(timestamp) as count "
                       + 'FROM auth '
                       + 'GROUP BY DATE(timestamp);');
 
