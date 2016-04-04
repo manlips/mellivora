@@ -27,24 +27,34 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/dailystats', function(req, res, next) {
-  console.log("Got a GET request for /dailyauth");
-  res.render('dailystats');
-});
-
 app.use(function(err, req, res, next) {
   console.log("Error: " + err.message);
   next();
 });
 
+app.get('/dailystats', function(req, res, next) {
+  console.log("Got a GET request for /dailystats");
+  res.render('dailystats');
+});
+
 app.get('/table', function (req, res) {
-   console.log("Got a GET request for /tables");
+   console.log("Got a GET request for /table");
    res.render('table');
 });
 
 app.get('/overview', function (req, res) {
    console.log("Got a GET request for /overview");
    res.render('overview');
+});
+
+app.get('/attackmap', function(req, res, next) {
+  console.log("Got a GET request for /attackmap");
+  res.render('attackmappage');
+});
+
+app.get('/ipstats', function(req, res, next) {
+  console.log("Got a GET request for /ipstats");
+  res.render('ipstats');
 });
 
 app.use(function(req, res) {
