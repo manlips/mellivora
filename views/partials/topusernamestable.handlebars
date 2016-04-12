@@ -1,0 +1,37 @@
+<div class="panel panel-default">
+    <div class="panel-heading" id="what">
+        Top 5 Usernames Today
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-striped" id="topusers">
+          </table>
+          <script>
+
+
+            $(document).ready( function () {
+              $.ajax({
+                url: 'json/topuserstoday.json',
+                datatype: 'json',
+                success: function(data) {
+                  html = "<thead><tr>" +
+                          "<th>Username</th>" +
+                          "<th>Count</th>" +
+                          "</tr></thead>" +
+                          "<tbody>";
+                  for(i = 0; i < data.length; i++) {
+                    html += "<tr>";
+                    html += "<td>" + data[i].username + "</td>";
+                    html += "<td>" + data[i].count + "</td>";
+                  }
+                  html += "</tbody>"
+                  $("#topusers").html(html);
+                }
+              })
+            })
+          </script>
+        </div>
+    </div>
+
+</div>

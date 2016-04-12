@@ -136,7 +136,31 @@ updateJson("locations", 'SELECT sessions.ip, COUNT(sessions.ip) as count, ip.lat
 
 updateJson("totalauthbyhour", "SELECT concat(DATE(timestamp),' ', HOUR(timestamp), ':00:00') as date, count(timestamp) as count "
         + "FROM auth "
-        + "GROUP BY date(timestamp), HOUR(timestamp)")
+        + "GROUP BY date(timestamp), HOUR(timestamp)");
+
+updateJson("authcountcountry", "SELECT ip.country_name, count(ip.country_name) as count "
+                            + "FROM auth "
+                            + "INNER JOIN sessions "
+                            + "ON auth.session = sessions.id "
+                            + "JOIN ip "
+                            + "ON sessions.ip = ip.ip "
+                            + "GROUP BY ip.country_name ");
+
+updateJson("topuserstoday", "SELECT username, count(*) count "
+	                         + "FROM auth "
+                           + "WHERE timestamp >= current_date() "
+                           + "AND timestamp <= current_date() + INTERVAL 1 DAY "
+                           + "GROUP BY username "
+                           + "ORDER BY count DESC "
+                           + "LIMIT 5");
+
+updateJson("toppasswordstoday", "SELECT password, count(*) count "
+	                         + "FROM auth "
+                          + "WHERE timestamp >= current_date() "
+                          + "AND timestamp <= current_date() + INTERVAL 1 DAY "
+                          + "GROUP BY password "
+                          + "ORDER BY count DESC "
+                          + "LIMIT 5");
 
 //REENABLE SAFE UPDATES!
 

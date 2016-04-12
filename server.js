@@ -57,6 +57,11 @@ app.get('/ipstats', function(req, res, next) {
   res.render('ipstats');
 });
 
+app.get('/geochart', function(req, res, next) {
+  console.log("Got a GET request for /geochart");
+  res.render('geochartpage');
+});
+
 app.use(function(req, res) {
   res.type('text/html');
   res.status(404);

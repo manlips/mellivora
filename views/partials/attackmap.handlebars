@@ -21,18 +21,20 @@
               //document.getElementById('chart_div').innerHTML = arrayItem.date;
               data.addRow([arrayItem.latitude, arrayItem.longitude, "<strong>IP: </strong>" + arrayItem.ip + '<br /> <strong>Country: </strong>' + arrayItem.country_name + '<br /> <strong>City: </strong>' + arrayItem.city_name + '<br /> <strong>Attempts: </strong>' + arrayItem.count + '<br /><a href="/ipstats?ip=' + arrayItem.ip +'"> Find out More! &gt;</a>']);
             });
+
+            var options = {
+              zoomLevel: 1,
+              showTip: true,
+              mapType: 'normal',
+              height: 1000,
+              enableScrollWheel: true
+            }
+
+            var map = new google.visualization.Map(document.getElementById('map_div'));
+            map.draw(data, options);
           });
 
-          var options = {
-            zoomLevel: 1,
-            showTip: true,
-            mapType: 'normal',
-            height: 1000,
-            enableScrollWheel: true
-          }
 
-          var map = new google.visualization.Map(document.getElementById('map_div'));
-          map.draw(data, options);
 
         }
 

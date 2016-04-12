@@ -1,0 +1,40 @@
+<div class="panel panel-default">
+
+      <div id="geochart_div" ></div>
+
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+      <script type="text/javascript">
+        google.charts.load('current', {'packages':['geochart']});
+        google.charts.setOnLoadCallback(drawRegionsMap);
+        function drawRegionsMap() {
+
+          var data = new google.visualization.DataTable();
+
+          $.getJSON('json/authcountcountry.json', function(obj) {
+
+            data.addColumn('string', 'Country');
+            data.addColumn('number', 'Authentication Count');
+
+            obj.forEach( function(arrayItem) {
+
+              data.addRow([arrayItem.country_name, arrayItem.count]);
+            });
+            var options = {
+              backgroundColor: '#81d4fa',
+              datalessRegionColor: '#ffffff',
+              defaultColor: '#f5f5f5',
+              colorAxis: {
+                colors: ['#eeeeee', '#ff6666', '#ff0000'],
+                values: [0, 600, 50000]
+              }
+            };
+
+            var chart = new google.visualization.GeoChart(document.getElementById('geochart_div'));
+
+            chart.draw(data, options);
+          });
+        }
+      </script>
+</div>
+<!-- /.panel -->
