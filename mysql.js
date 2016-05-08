@@ -61,6 +61,10 @@ function updateIPTable() {
                   + 'FROM sessions '
                   + 'LEFT OUTER JOIN ip '
                   + 'ON sessions.ip = ip.ip '
+                  + 'WHERE ip.ip IS NULL '
+                  + 'UNION '
+                  + 'SELECT DISTINCT sensors.public_ip FROM sensors '
+                  + 'LEFT OUTER JOIN ip ON sensors.public_ip = ip.ip '
                   + 'WHERE ip.ip IS NULL;',
                    function(error, result) {
     if(error){
@@ -120,47 +124,66 @@ function updateIPTable() {
   });
 };
 
+function updateAllJson() {
+  updateJson("totalauthbyday", "SELECT DATE_FORMAT(timestamp, '%Y-%m-%d') as date, COUNT(timestamp) as count "
+                        + 'FROM auth '
+                        + 'GROUP BY DATE(timestamp);');
+
+  updateJson("locations", 'SELECT sessions.ip, COUNT(sessions.ip) as count, ip.latitude, ip.longitude, ip.country_name, ip.region_name, ip.city_name '
+                        + 'FROM auth '
+                        + 'INNER JOIN sessions '
+                        + 'ON auth.session = sessions.id '
+                        + 'JOIN ip '
+                        + 'ON sessions.ip = ip.ip '
+                        + 'GROUP BY sessions.ip');
+
+  updateJson("totalauthbyhour", "SELECT concat(DATE(timestamp),' ', HOUR(timestamp), ':00:00') as date, count(timestamp) as count "
+          + "FROM auth "
+          + "GROUP BY date(timestamp), HOUR(timestamp)");
+
+  updateJson("authcountcountry", "SELECT ip.country_name, count(ip.country_name) as count "
+                              + "FROM auth "
+                              + "INNER JOIN sessions "
+                              + "ON auth.session = sessions.id "
+                              + "JOIN ip "
+                              + "ON sessions.ip = ip.ip "
+                              + "GROUP BY ip.country_name ");
+
+  updateJson("topuserstoday", "SELECT username, count(*) count "
+  	                         + "FROM auth "
+                             + "WHERE timestamp >= current_date() "
+                             + "AND timestamp <= current_date() + INTERVAL 1 DAY "
+                             + "GROUP BY username "
+                             + "ORDER BY count DESC "
+                             + "LIMIT 5");
+
+  updateJson("toppasswordstoday", "SELECT password, count(*) count "
+  	                         + "FROM auth "
+                            + "WHERE timestamp >= current_date() "
+                            + "AND timestamp <= current_date() + INTERVAL 1 DAY "
+                            + "GROUP BY password "
+                            + "ORDER BY count DESC "
+                            + "LIMIT 5");
+
+  updateJson("latestsensorhealth", "SELECT h.sensor, s.codename, s.public_ip, i.city_name as location, h.cpuavg10 as cpuload, h.totalthreads, h.diskutil FROM health h "
+                              + "JOIN sensors s on s.id = h.sensor "
+                              + "JOIN ip i on i.ip = s.public_ip "
+                              + "WHERE timestamp = (select max(timestamp) from health)");
+
+  updateJson("allattackers", "SELECT concat('<a href=\"/ipstats?ip=',sessions.ip,'\">', sessions.ip, '</a>') AS 'source', COUNT(sessions.ip) AS count, Date_Format(MIN(sessions.starttime), '%d %b %Y %T') AS 'first', Date_Format(MAX(sessions.starttime), '%d %b %Y %T') AS 'last', "
+                            +  "CASE WHEN EXISTS(SELECT session from input where input.session = sessions.id) "
+	                          +  "THEN concat('<a href=\"/ipstats?ip=',sessions.ip,'\">', 'True', '</a>') "
+                            +  "ELSE 'False' "
+                            +  "END AS input "
+                            +  "FROM sessions, auth "
+                            +  "WHERE auth.session = sessions.id "
+                            +  "GROUP BY sessions.ip "
+                            +  "ORDER BY COUNT(sessions.ip) desc;")
+}
+
 updateIPTable();
 //updateAuthJson(); //This one is a hassle but keeping here for the sake of a few functions
-updateJson("totalauthbyday", "SELECT DATE_FORMAT(timestamp, '%Y-%m-%d') as date, COUNT(timestamp) as count "
-                      + 'FROM auth '
-                      + 'GROUP BY DATE(timestamp);');
-
-updateJson("locations", 'SELECT sessions.ip, COUNT(sessions.ip) as count, ip.latitude, ip.longitude, ip.country_name, ip.region_name, ip.city_name '
-                      + 'FROM auth '
-                      + 'INNER JOIN sessions '
-                      + 'ON auth.session = sessions.id '
-                      + 'JOIN ip '
-                      + 'ON sessions.ip = ip.ip '
-                      + 'GROUP BY sessions.ip');
-
-updateJson("totalauthbyhour", "SELECT concat(DATE(timestamp),' ', HOUR(timestamp), ':00:00') as date, count(timestamp) as count "
-        + "FROM auth "
-        + "GROUP BY date(timestamp), HOUR(timestamp)");
-
-updateJson("authcountcountry", "SELECT ip.country_name, count(ip.country_name) as count "
-                            + "FROM auth "
-                            + "INNER JOIN sessions "
-                            + "ON auth.session = sessions.id "
-                            + "JOIN ip "
-                            + "ON sessions.ip = ip.ip "
-                            + "GROUP BY ip.country_name ");
-
-updateJson("topuserstoday", "SELECT username, count(*) count "
-	                         + "FROM auth "
-                           + "WHERE timestamp >= current_date() "
-                           + "AND timestamp <= current_date() + INTERVAL 1 DAY "
-                           + "GROUP BY username "
-                           + "ORDER BY count DESC "
-                           + "LIMIT 5");
-
-updateJson("toppasswordstoday", "SELECT password, count(*) count "
-	                         + "FROM auth "
-                          + "WHERE timestamp >= current_date() "
-                          + "AND timestamp <= current_date() + INTERVAL 1 DAY "
-                          + "GROUP BY password "
-                          + "ORDER BY count DESC "
-                          + "LIMIT 5");
+updateAllJson();
 
 //REENABLE SAFE UPDATES!
 
@@ -190,4 +213,5 @@ function mysql_real_escape_string (str) {
 }
 
 module.exports.updateIPTable = updateIPTable;
+module.exports.updateAllJson = updateAllJson;
 // module.exports.queryAuth = queryAuth;

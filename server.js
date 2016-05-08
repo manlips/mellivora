@@ -1,5 +1,26 @@
 var express = require('express');
 var app = express();
+var CronJob = require('cron').CronJob;
+var sql = require("./mysql.js");
+var mysql = require("mysql");
+var fs = require("fs");
+
+// First you need to create a connection to the db
+var connection = mysql.createConnection({
+  host: "52.31.79.0",
+  user: "KingOfBees",
+  password: "LotusFlower5:01",
+  database: "cowriedb"
+});
+
+connection.connect(function(error){
+  if(error){
+    console.log('*DBConnect*: Error connecting to Db: ' + error.stack);
+    //Error: Cannot enqueue Handshake after invoking quit.
+    return;
+  }
+  console.log('*DBConnect*: Connection to DB established with ID: ' + connection.threadId);
+});
 
 //makes it a little more secure, stops user seeing header
 app.disable('x-powered-by');
@@ -54,12 +75,29 @@ app.get('/attackmap', function(req, res, next) {
 
 app.get('/ipstats', function(req, res, next) {
   console.log("Got a GET request for /ipstats");
-  res.render('ipstats');
+  connection.query("SELECT i.input, DATE_FORMAT(i.timestamp, '%d %b %Y %T') as timestamp "
+                  + "FROM input i "
+                  + "JOIN sessions s on s.id = i.session "
+                  + "WHERE s.ip = '" + req.query.ip + "'"
+                  + "order by timestamp desc;", function(err, result) {
+
+                      if(err){
+                          throw err;
+                      } else {
+                          res.render('ipstats', {data: result});
+                      }
+                  });
 });
 
 app.get('/geochart', function(req, res, next) {
   console.log("Got a GET request for /geochart");
   res.render('geochartpage');
+});
+
+app.get('/attackers', function(req, res, next) {
+  console.log("Got a GET request for /attackers");
+  res.render('attackerspage');
+
 });
 
 app.use(function(req, res) {
@@ -80,3 +118,9 @@ app.listen(app.get('port'), function () {
   console.log("Example app listening at http://localhost:" + app.get('port'));
 
 });
+
+new CronJob('0 */10 * * * *', function() {
+  console.log('Running 10 minutely cron job...');
+  sql.updateAllJson();
+  sql.updateIPTable();
+}, null, true);

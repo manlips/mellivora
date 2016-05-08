@@ -1,0 +1,29 @@
+<div class="panel panel-default">
+    <div class="panel-heading" id="what">
+        Honeypots Online
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body" id="pothealth">
+          <script>
+            $(document).ready( function () {
+              $.ajax({
+                url: 'json/latestsensorhealth.json',
+                datatype: 'json',
+                success: function(data) {
+                  var html = "";
+                  data.forEach(function(arrayItem) {
+                    html += '<h3><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green"></span>';
+                    html += " " + arrayItem.codename + "</h3>";
+                    html += "<strong>Public IP: </strong> " + arrayItem.public_ip + " <br />";
+                    html += "<strong>CPU Load: </strong> " + arrayItem.cpuload * 100 + "% <br />";
+                    html += "<strong>Threads: </strong> " + arrayItem.totalthreads + " <br />";
+                    html += "<strong>Disk Usage: </strong> " + arrayItem.diskutil + " <br />";
+                    html += "<hr />";
+                  });
+                  $("#pothealth").html(html);
+                }
+              })
+            });
+          </script>
+    </div>
+</div>

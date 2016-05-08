@@ -1,0 +1,50 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Attacking IPs
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+      <div class="dataTable_wrapper">
+          <table class="table table-striped table-bordered table-hover" id="auth_datatable">
+            <thead>
+              <tr>
+                  <th>Source IP</th>
+                  <th data-priority="1">Number of Sessions</th>
+                  <th>First Seen</th>
+                  <th>Last Seen</th>
+                  <th>Has Input?</th>
+              </tr>
+            </thead>
+          </table>
+      </div>
+      <!-- /.table-responsive -->
+
+      <!-- DataTables JavaScript -->
+      <script type="text/javascript" src="/datatables/DataTables-1.10.11/js/jquery.dataTables.js"></script>
+      <script type="text/javascript" src="/datatables/DataTables-1.10.11/js/dataTables.bootstrap.js"></script>
+      <script type="text/javascript" src="/datatables/Responsive-2.0.2/js/dataTables.responsive.js"></script>
+
+      <script>
+        $(document).ready( function () {
+          $('#auth_datatable').DataTable( {
+            "order": [[ 1, 'desc' ]],
+            responsive: true,
+            ajax: {
+              url: '/json/allattackers.json',
+              dataSrc: ''
+            },
+            "columns": [
+              {"data": "source"},
+              {"data": "count"},
+              {"data": "first"},
+              {"data": "last"},
+              {"data": "input"}
+            ]
+          });
+        } );
+      </script>
+
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->

@@ -15,7 +15,24 @@
       <p>
         Woah you didn't honestly think I'd got that far right?
       </p>
-      <a href="/overview">&lt; BAAACK to the overview</a>
+      <table id="inputstats" >
+        <thead>
+          <tr>
+            <th>Input</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each data}}
+          <tr>
+            <td>{{input}}</td>
+            <td>{{timestamp}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+
+
+    </table>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -25,4 +42,5 @@
 <script>
   var ip = GetURLParameter('ip');
   $(".page-header").text("IP Stats for " + ip);
+
 </script>
