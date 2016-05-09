@@ -1,0 +1,42 @@
+<div class="panel panel-default">
+    <div class="panel-heading" id="what">
+        Top 10 Commands
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-striped" id="top10input">
+          </table>
+          <script>
+
+
+            $(document).ready( function () {
+              $.ajax({
+                url: 'json/top10input.json',
+                datatype: 'json',
+                success: function(data) {
+                  html = "<thead><tr>" +
+                          "<th>Input</th>" +
+                          "<th>Count</th>" +
+                          "<th>First Used</th>" +
+                          "<th>Last Used</th>" +
+                          "</tr></thead>" +
+                          "<tbody>";
+                  for(i = 0; i < data.length; i++) {
+                    html += "<tr>";
+                    html += "<td>" + data[i].input + "</td>";
+                    html += "<td>" + data[i].count + "</td>";
+                    html += "<td>" + data[i].first_used + "</td>";
+                    html += "<td>" + data[i].last_used + "</td>";
+                    html += "</tr>";
+                  }
+                  html += "</tbody>"
+                  $("#top10input").html(html);
+                }
+              })
+            })
+          </script>
+        </div>
+    </div>
+
+</div>

@@ -5,6 +5,45 @@
 <div class="row">
     <div class="col-lg-12">
         <h1 class="page-header">IP Stats for: [unknown]</h1>
+
+        <br />
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-lg-4">
+        {{#each info}}
+        <img width="100%" src="http://maps.googleapis.com/maps/api/staticmap?center={{latitude}},{{longitude}}&zoom=4&scale=false&size=400x400&maptype=roadmap&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C{{latitude}},{{longitude}}" alt="Google Map of {{latitude}},{{longitude}}">
+        {{/each}}
+      </div>
+      <!-- /.col-lg-4 -->
+      <div class="col-lg-8">
+        {{#each info}}
+          <h4><strong>Country:</strong> {{country_name}}</h4>
+          <h4><strong>Region:</strong> {{region_name}}</h4>
+          <h4><strong>City:</strong> {{city_name}}</h4>
+          <h4><strong>Latitude/Longitude:</strong> {{latitude}} , {{longitude}}</h4>
+          <h4><strong>SSH Version:</strong> {{version}}</h4>
+          <br />
+          <h4><strong>First Seen:</strong> {{first_seen}}</h4>
+          <h4><strong>Last Seen:</strong> {{last_seen}}</h4>
+          <br />
+          <h4><strong>Total Sessions:</strong> {{total_sessions}}</h4>
+
+        {{/each}}
+      </div>
+      <!-- /.col-lg-8 -->
+    </div>
+  </div>
+</div>
+<!-- /.row -->
+
+<div class="row">
+    <div class="col-lg-12">
+      {{>inputstatstable}}
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -12,27 +51,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-      <p>
-        Woah you didn't honestly think I'd got that far right?
-      </p>
-      <table id="inputstats" >
-        <thead>
-          <tr>
-            <th>Input</th>
-            <th>Timestamp</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{#each data}}
-          <tr>
-            <td>{{input}}</td>
-            <td>{{timestamp}}</td>
-          </tr>
-          {{/each}}
-        </tbody>
-
-
-    </table>
+      <a class="btn btn-primary" href="/overview">Back to Overview</a>
     </div>
     <!-- /.col-lg-12 -->
 </div>

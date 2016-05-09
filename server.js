@@ -74,17 +74,31 @@ app.get('/attackmap', function(req, res, next) {
 });
 
 app.get('/ipstats', function(req, res, next) {
+  var ip = req.query.ip;
   console.log("Got a GET request for /ipstats");
   connection.query("SELECT i.input, DATE_FORMAT(i.timestamp, '%d %b %Y %T') as timestamp "
                   + "FROM input i "
                   + "JOIN sessions s on s.id = i.session "
-                  + "WHERE s.ip = '" + req.query.ip + "'"
+                  + "WHERE s.ip = '" + ip + "'"
                   + "order by timestamp desc;", function(err, result) {
 
                       if(err){
                           throw err;
                       } else {
-                          res.render('ipstats', {data: result});
+                        var inputdata = result;
+                        connection.query("SELECT c.version as 'version', i.country_name, i.region_name, i.city_name, i.latitude, i.longitude, min(s.starttime) as 'first_seen', max(s.endtime) as 'last_seen', count(s.ip) as 'total_sessions' "
+                                          + "from sessions s "
+                                          + "JOIN clients c on c.id = s.client "
+                                          + "JOIN ip i on i.ip = s.ip "
+                                          + "WHERE s.ip = '" + ip +"';", function(err, result) {
+                                            if(err){
+                                                throw err;
+                                            } else {
+
+                                              res.render('ipstats', {input: inputdata, info: result});
+                                            }
+                                          })
+
                       }
                   });
 });
@@ -98,6 +112,11 @@ app.get('/attackers', function(req, res, next) {
   console.log("Got a GET request for /attackers");
   res.render('attackerspage');
 
+});
+
+app.get('/honeypots', function(req, res, next) {
+  console.log("Got a GET request for /honeypots");
+  res.render('honeypotspage');
 });
 
 app.use(function(req, res) {

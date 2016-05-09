@@ -135,7 +135,9 @@ function updateAllJson() {
                         + 'ON auth.session = sessions.id '
                         + 'JOIN ip '
                         + 'ON sessions.ip = ip.ip '
-                        + 'GROUP BY sessions.ip');
+                        + 'GROUP BY sessions.ip '
+                        + 'ORDER BY count DESC '
+                        + 'LIMIT 400;');
 
   updateJson("totalauthbyhour", "SELECT concat(DATE(timestamp),' ', HOUR(timestamp), ':00:00') as date, count(timestamp) as count "
           + "FROM auth "
@@ -165,10 +167,10 @@ function updateAllJson() {
                             + "ORDER BY count DESC "
                             + "LIMIT 5");
 
-  updateJson("latestsensorhealth", "SELECT h.sensor, s.codename, s.public_ip, i.city_name as location, h.cpuavg10 as cpuload, h.totalthreads, h.diskutil FROM health h "
+  updateJson("latestsensorhealth", "SELECT h.sensor, s.codename, s.public_ip, i.city_name as location, h.cpuavg10 as cpuload, h.totalthreads, h.diskutil, DATE_FORMAT(h.timestamp, '%d %b %T') as timestamp FROM health h "
                               + "JOIN sensors s on s.id = h.sensor "
                               + "JOIN ip i on i.ip = s.public_ip "
-                              + "WHERE timestamp = (select max(timestamp) from health)");
+                              + "WHERE DATE_FORMAT(h.timestamp, '%d %b %Y %H:%i') = (SELECT DATE_FORMAT(MAX(h.timestamp), '%d %b %Y %H:%i') FROM health h)");
 
   updateJson("allattackers", "SELECT concat('<a href=\"/ipstats?ip=',sessions.ip,'\">', sessions.ip, '</a>') AS 'source', COUNT(sessions.ip) AS count, Date_Format(MIN(sessions.starttime), '%d %b %Y %T') AS 'first', Date_Format(MAX(sessions.starttime), '%d %b %Y %T') AS 'last', "
                             +  "CASE WHEN EXISTS(SELECT session from input where input.session = sessions.id) "
@@ -178,7 +180,19 @@ function updateAllJson() {
                             +  "FROM sessions, auth "
                             +  "WHERE auth.session = sessions.id "
                             +  "GROUP BY sessions.ip "
-                            +  "ORDER BY COUNT(sessions.ip) desc;")
+                            +  "ORDER BY COUNT(sessions.ip) desc;");
+
+  updateJson("top10input", "SELECT input, count(*) count, Date_Format(MIN(timestamp), '%d %b %Y %T') 'first_used', Date_Format(MAX(timestamp), '%d %b %Y %T') 'last_used' "
+                          + "FROM input "
+                          + "GROUP BY input "
+                          + "ORDER BY count DESC "
+                          + "LIMIT 10;");
+
+  updateJson("allsensorstats", "SELECT h.sensor, s.codename, s.config_link, s.host, s.ip as hostname, s.public_ip, i.country_name, i.region_name, i.city_name, i.latitude, i.longitude, h.cpuavg10 as cpuload, h.totalthreads, h.diskutil, h.rcvpkts, h.sndpkts, h.uptime, DATE_FORMAT(h.timestamp, '%d %b %Y %T') as timestamp "
+                              + "FROM health h "
+                              + "JOIN sensors s on s.id = h.sensor "
+                              + "JOIN ip i on i.ip = s.public_ip "
+                              + "WHERE DATE_FORMAT(h.timestamp, '%d %b %Y %H:%i') = (SELECT DATE_FORMAT(MAX(h.timestamp), '%d %b %Y %H:%i') FROM health h);");
 }
 
 updateIPTable();

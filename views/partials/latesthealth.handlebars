@@ -14,10 +14,12 @@
                   data.forEach(function(arrayItem) {
                     html += '<h3><span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:green"></span>';
                     html += " " + arrayItem.codename + "</h3>";
+                    html += "<strong>Location: </strong> " + arrayItem.location + " <br />";
                     html += "<strong>Public IP: </strong> " + arrayItem.public_ip + " <br />";
                     html += "<strong>CPU Load: </strong> " + arrayItem.cpuload * 100 + "% <br />";
                     html += "<strong>Threads: </strong> " + arrayItem.totalthreads + " <br />";
                     html += "<strong>Disk Usage: </strong> " + arrayItem.diskutil + " <br />";
+                    html += "<strong>Last Updated: </strong> " + arrayItem.timestamp + " <br />";
                     html += "<hr />";
                   });
                   $("#pothealth").html(html);

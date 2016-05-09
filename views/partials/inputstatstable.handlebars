@@ -1,0 +1,39 @@
+<div class="row" id="input-section">
+    <div class="col-lg-12">
+      <div class="panel panel-default">
+          <div class="panel-heading" id="what">
+              Input Table
+          </div>
+          <!-- /.panel-heading -->
+          <div class="panel-body">
+              <div class="table-responsive">
+                <table class="table table-striped" id="inputstats" >
+                  <thead>
+                    <tr>
+                      <th>Input</th>
+                      <th>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {{#each input}}
+                    <tr>
+                      <td>{{input}}</td>
+                      <td>{{timestamp}}</td>
+                    </tr>
+                    {{else}}
+                    <script>
+                      $("#input-section").remove();
+                    </script>
+                    {{/each}}
+                  </tbody>
+
+
+                </table>
+              </div>
+          </div>
+
+      </div>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- /.row -->
