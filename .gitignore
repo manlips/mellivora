@@ -4,3 +4,6 @@ node_modules
 credentials
 *~
 old
+*~
+public/json/*
+!public/json/totalauth.json
