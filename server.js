@@ -135,7 +135,7 @@ app.use(function(err, req, res, next) {
 
 app.listen(app.get('port'), function () {
 
-  console.log("Example app listening at http://localhost:" + app.get('port'));
+  console.log("Mellivora is listening at http://localhost:" + app.get('port'));
 
 });
 
