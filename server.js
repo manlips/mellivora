@@ -76,15 +76,16 @@ app.get('/attackmap', function(req, res, next) {
 app.get('/ipstats', function(req, res, next) {
   var ip = req.query.ip;
   console.log("Got a GET request for /ipstats");
-  connection.query("SELECT i.input, DATE_FORMAT(i.timestamp, '%d %b %Y %T') as timestamp "
+  connection.query("SELECT i.input, DATE_FORMAT(i.timestamp, '%d %b %Y %T') as inputtime "
                   + "FROM input i "
                   + "JOIN sessions s on s.id = i.session "
                   + "WHERE s.ip = '" + ip + "'"
-                  + "order by timestamp desc;", function(err, result) {
+                  + "ORDER BY i.timestamp DESC;", function(err, result) {
 
                       if(err){
                           throw err;
                       } else {
+                        console.log("Successful SQL request for ipstats input: " + ip);
                         var inputdata = result;
                         connection.query("SELECT c.version as 'version', i.country_name, i.region_name, i.city_name, i.latitude, i.longitude, min(s.starttime) as 'first_seen', max(s.endtime) as 'last_seen', count(s.ip) as 'total_sessions' "
                                           + "from sessions s "
@@ -94,7 +95,7 @@ app.get('/ipstats', function(req, res, next) {
                                             if(err){
                                                 throw err;
                                             } else {
-
+                                              console.log("Successful SQL request for ipstats info: " + ip);
                                               res.render('ipstats', {input: inputdata, info: result});
                                             }
                                           })
