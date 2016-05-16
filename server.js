@@ -79,8 +79,8 @@ app.get('/ipstats', function(req, res, next) {
   connection.query("SELECT i.input, DATE_FORMAT(i.timestamp, '%d %b %Y %T') as inputtime "
                   + "FROM input i "
                   + "JOIN sessions s on s.id = i.session "
-                  + "WHERE s.ip = '" + ip + "'"
-                  + "ORDER BY i.timestamp DESC;", function(err, result) {
+                  + "WHERE s.ip = ?"
+                  + "ORDER BY i.timestamp DESC;", [ip], function(err, result) {
 
                       if(err){
                           throw err;
@@ -91,7 +91,7 @@ app.get('/ipstats', function(req, res, next) {
                                           + "from sessions s "
                                           + "JOIN clients c on c.id = s.client "
                                           + "JOIN ip i on i.ip = s.ip "
-                                          + "WHERE s.ip = '" + ip +"';", function(err, result) {
+                                          + "WHERE s.ip = ?;", [ip], function(err, result) {
                                             if(err){
                                                 throw err;
                                             } else {
