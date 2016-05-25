@@ -1,9 +1,11 @@
+require('console-stamp')(console, 'dd/mm/yyyy HH:MM:ss.l');
 var express = require('express');
 var app = express();
 var CronJob = require('cron').CronJob;
 var sql = require("./mysql.js");
 var mysql = require("mysql");
 var fs = require("fs");
+
 
 // First you need to create a connection to the db
 var connection = mysql.createConnection({
@@ -35,6 +37,7 @@ app.set('view engine', 'handlebars');
 app.set('port', process.env.PORT || 3000);
 
 app.use(express.static(__dirname + '/public'));
+
 
 
 // This responds with "Hello World" on the homepage
