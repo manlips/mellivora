@@ -4,10 +4,16 @@
           <div class="panel-heading" id="what">
               Input Table
           </div>
+
+          <!-- DataTables JavaScript -->
+          <script type="text/javascript" src="/datatables/DataTables-1.10.11/js/jquery.dataTables.js"></script>
+          <script type="text/javascript" src="/datatables/DataTables-1.10.11/js/dataTables.bootstrap.js"></script>
+          <script type="text/javascript" src="/datatables/Responsive-2.0.2/js/dataTables.responsive.js"></script>
+
           <!-- /.panel-heading -->
           <div class="panel-body">
               <div class="table-responsive">
-                <table class="table table-striped" id="inputstats" >
+                <table class="table display responsive table-striped" id="inputstats" >
                   <thead>
                     <tr>
                       <th>Input</th>
@@ -29,6 +35,14 @@
 
 
                 </table>
+                <script>
+                $(document).ready(function() {
+                  $('#inputstats').DataTable({
+                    "order": [[ 1, 'desc' ]],
+                    responsive: true
+                  });
+                } );
+                </script>
               </div>
           </div>
 

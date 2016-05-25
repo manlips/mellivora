@@ -100,6 +100,7 @@ function updateIPTable() {
     });
     console.log("*updateIPTable*: Running select queries...");
     curNum = 0;
+    insertNum = 0;
     sql.forEach(function(arrayItem) {
       connection.query(arrayItem.query, function(error, result) {
         curNum += 1;
@@ -107,18 +108,19 @@ function updateIPTable() {
           console.error('*updateIPTable*: ------ Error on selecting IP: ' + error + " (IP " + curNum + " of " + numIPs + ") ------");
           return
         }
-        console.log("*updateIPTable*: Lookup of " + arrayItem.ip + " Successful | Country: " + result[0].country_name + " (IP " + curNum + " of " + numIPs + ")");
+        console.log("*updateIPTable*: Lookup of " + arrayItem.ip + " Successful | Country: " + result[0].country_name + " (" + curNum + " of " + numIPs + ")");
         result[0].ip = arrayItem.ip;
         //console.log(result);
         var ipdata = result;
         connection.query("INSERT INTO ip (ip, country_code, country_name, region_name, city_name, latitude, longitude)" +
                           "VALUES ('" + ipdata[0].ip + "','" + ipdata[0].country_code + "','" + mysql_real_escape_string(ipdata[0].country_name) + "','" + mysql_real_escape_string(ipdata[0].region_name) + "','" + mysql_real_escape_string(ipdata[0].city_name) + "','" + ipdata[0].latitude + "','" + ipdata[0].longitude + "');",
                         function(error, result) {
+                          insertNum += 1
                           if(error) {
                             console.error('*updateIPTable*: ------ Error on Inserting IP Details: ' + error + " (IP " + curNum + " of " + numIPs + ") ------");
                             return
                           }
-                          console.log("*updateIPTable*: Successfully Inserted: " + ipdata[0].ip + " | Server Status: " + result.serverStatus + " | Affected Rows: " + result.affectedRows  + " (IP " + curNum + " of " + numIPs + ")");
+                          console.log("*updateIPTable*: Successfully Inserted: " + ipdata[0].ip + " | Server Status: " + result.serverStatus + " | Affected Rows: " + result.affectedRows  + " (" + insertNum + " of " + numIPs + ")");
                           //console.log(result);
                         });
       });
@@ -184,11 +186,16 @@ function updateAllJson() {
                             +  "GROUP BY sessions.ip "
                             +  "ORDER BY COUNT(sessions.ip) desc;");
 
-  updateJson("top10input", "SELECT input, count(*) count, Date_Format(MIN(timestamp), '%d %b %Y %T') 'first_used', Date_Format(MAX(timestamp), '%d %b %Y %T') 'last_used' "
+  // updateJson("top10input", "SELECT input, count(*) count, Date_Format(MIN(timestamp), '%d %b %Y %T') 'first_used', Date_Format(MAX(timestamp), '%d %b %Y %T') 'last_used' "
+  //                         + "FROM input "
+  //                         + "GROUP BY input "
+  //                         + "ORDER BY count DESC "
+  //                         + "LIMIT 10;");
+
+  updateJson("allinput", "SELECT input, count(*) count, Date_Format(MIN(timestamp), '%d %b %Y %T') 'first_used', Date_Format(MAX(timestamp), '%d %b %Y %T') 'last_used' "
                           + "FROM input "
                           + "GROUP BY input "
-                          + "ORDER BY count DESC "
-                          + "LIMIT 10;");
+                          + "ORDER BY count DESC;");
 
   updateJson("allsensorstats", "SELECT h.sensor, s.codename, s.config_link, s.host, s.ip as hostname, s.public_ip, i.country_name, i.region_name, i.city_name, i.latitude, i.longitude, h.cpuavg10 as cpuload, h.totalthreads, h.diskutil, h.rcvpkts, h.sndpkts, h.uptime, DATE_FORMAT(h.timestamp, '%d %b %Y %T') as timestamp "
                               + "FROM health h "

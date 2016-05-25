@@ -8,41 +8,44 @@
 
       <script type="text/javascript">
 
-          google.charts.load('current', {packages: ['corechart', 'line']});
+          google.charts.load('current', {packages: ['corechart', 'line', 'geochart']});
 
           google.charts.setOnLoadCallback(drawChart);
 
           //Convoluted process to count dates...
           function drawChart() {
 
-            var data = new google.visualization.DataTable();
+            var graphdata = new google.visualization.DataTable();
 
             $.getJSON('json/totalauthbyday.json', function(obj) {
 
-              data.addColumn('date', 'Date');
-              data.addColumn('number', 'Authentication Requests');
+              graphdata.addColumn('date', 'Date');
+              graphdata.addColumn('number', 'Authentication Requests');
 
               obj.forEach( function(arrayItem) {
                 document.getElementById('chart_div').innerHTML = arrayItem.date;
-                data.addRow([new Date(arrayItem.date), arrayItem.count]);
+                graphdata.addRow([new Date(arrayItem.date), arrayItem.count]);
               });
-              var options = {
+              var graphoptions = {
                 height: 400,
                 hAxis: {
                   format: 'dd/MM/yyyy'
                 }
               }
-              var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+              var graphchart = new google.visualization.LineChart(document.getElementById('chart_div'));
 
-              chart.draw(data, options);
 
-              google.visualization.events.addListener(chart, 'select', function() {
-                var selection = chart.getSelection();
-                var row = selection[0].row;
-                var col = selection[0].column;
-                var dateSelect = data.getValue(row, 0);
-                location.href = '/dailystats?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect)/1000;
-              })
+
+                graphchart.draw(graphdata, graphoptions);
+
+
+                google.visualization.events.addListener(graphchart, 'select', function() {
+                  var selection = graphchart.getSelection();
+                  var row = selection[0].row;
+                  var col = selection[0].column;
+                  var dateSelect = graphdata.getValue(row, 0);
+                  location.href = '/dailystats?row=' + row + '&col=' + col + '&date=' + Date.parse(dateSelect)/1000;
+                })
 
             })
 

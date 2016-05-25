@@ -25,6 +25,11 @@
   float:right;
 }
 
+#pothealth {
+  max-height: 430px;
+  overflow-y: scroll;
+}
+
 .vcenter {
     display: inline-block;
     vertical-align: middle;
