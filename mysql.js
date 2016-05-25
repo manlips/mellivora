@@ -75,7 +75,7 @@ function updateIPTable() {
       return;
     }
     //console.log(JSON.stringify(result));
-
+    var numIPs = 0; //number of IPs found
     var ipnums= [];
     //console.log("*updateIPTable*: New IPs Found!");
     result.forEach( function(arrayItem) {
@@ -88,9 +88,10 @@ function updateIPTable() {
       currentIpNum += individualNums[2] * 256;
       currentIpNum += parseInt(individualNums[3]);
       arrayItem.ipnum = currentIpNum;
+      numIPs += 1;
       console.log("*updateIPTable*: IP Found: " + arrayItem.ip + " | Setting IPNum to: " + currentIpNum);
     })
-
+    console.log("*updateIPTable*: " + numIPs + " new IPs found :D");
     var sql = []
     result.forEach(function(arrayItem) {
       sql.push({"ip": arrayItem.ip, "query": 'SELECT country_code, country_name, region_name, city_name, latitude, longitude ' +
@@ -98,14 +99,15 @@ function updateIPTable() {
                 'WHERE ip_from <= ' + arrayItem.ipnum + ' AND ' + arrayItem.ipnum + ' <= ip_to;'});
     });
     console.log("*updateIPTable*: Running select queries...");
-
+    curNum = 0;
     sql.forEach(function(arrayItem) {
       connection.query(arrayItem.query, function(error, result) {
+        curNum += 1;
         if(error) {
-          console.error('*updateIPTable*: ------ Error on selecting IP: ' + error + "------");
+          console.error('*updateIPTable*: ------ Error on selecting IP: ' + error + " (IP " + curNum + " of " + numIPs + ") ------");
           return
         }
-        console.log("*updateIPTable*: Lookup of " + arrayItem.ip + " Successful | Country: " + result[0].country_name);
+        console.log("*updateIPTable*: Lookup of " + arrayItem.ip + " Successful | Country: " + result[0].country_name + " (IP " + curNum + " of " + numIPs + ")");
         result[0].ip = arrayItem.ip;
         //console.log(result);
         var ipdata = result;
@@ -113,10 +115,10 @@ function updateIPTable() {
                           "VALUES ('" + ipdata[0].ip + "','" + ipdata[0].country_code + "','" + mysql_real_escape_string(ipdata[0].country_name) + "','" + mysql_real_escape_string(ipdata[0].region_name) + "','" + mysql_real_escape_string(ipdata[0].city_name) + "','" + ipdata[0].latitude + "','" + ipdata[0].longitude + "');",
                         function(error, result) {
                           if(error) {
-                            console.error('*updateIPTable*: ------ Error on Inserting IP Details: ' + error + " ------");
+                            console.error('*updateIPTable*: ------ Error on Inserting IP Details: ' + error + " (IP " + curNum + " of " + numIPs + ") ------");
                             return
                           }
-                          console.log("*updateIPTable*: Successfully Inserted: " + ipdata[0].ip + " | Server Status: " + result.serverStatus + " | Affected Rows: " + result.affectedRows);
+                          console.log("*updateIPTable*: Successfully Inserted: " + ipdata[0].ip + " | Server Status: " + result.serverStatus + " | Affected Rows: " + result.affectedRows  + " (IP " + curNum + " of " + numIPs + ")");
                           //console.log(result);
                         });
       });

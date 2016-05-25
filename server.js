@@ -15,11 +15,11 @@ var connection = mysql.createConnection({
 
 connection.connect(function(error){
   if(error){
-    console.log('*DBConnect*: Error connecting to Db: ' + error.stack);
+    console.log('*DBConnect*: Error connecting to Db on server.js: ' + error.stack);
     //Error: Cannot enqueue Handshake after invoking quit.
     return;
   }
-  console.log('*DBConnect*: Connection to DB established with ID: ' + connection.threadId);
+  console.log('*DBConnect*: Connection to DB established on server.js with ID: ' + connection.threadId);
 });
 
 //makes it a little more secure, stops user seeing header
